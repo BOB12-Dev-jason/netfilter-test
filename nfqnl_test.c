@@ -72,28 +72,18 @@ static u_int32_t print_pkt (struct nfq_data *tb)
 		printf("physoutdev=%u ", ifi);
 
 	char* host;
-	char *onlyhost;
 	ret = nfq_get_payload(tb, &data);
 	if (ret >= 0) {
 		printf("payload_len=%d\n", ret);
 		dump(data, ret);
 		
-		
-		puts("data");
-		for(int i=62; i<ret; i++) printf("%c", data[i]);
-		
-		puts("host name?2");
 		host = data+62;
-		printf("host: %s\n", host);
-		//for(int i=0; i<strlen(arghostname); i++) printf("%c", host[i]);
-		putchar('\n');
 		
-		printf("before strncpy: %s\n ",hostname);
+		// printf("before strncpy: %s\n ",hostname);
 		strncpy(hostname, host, strlen(arghostname));
-		strcpy(host, " ");
-		printf("after strncpy: %s\n ",hostname);
-		printf("onlyhost: %s\n", hostname);
 		
+		strcpy(host, " ");
+		// printf("after strncpy: %s\n ",hostname);
 		
 	}
 	
@@ -108,13 +98,10 @@ static int cb(struct nfq_q_handle *qh, struct nfgenmsg *nfmsg,
 {
 	u_int32_t id = print_pkt(nfa);
 	printf("entering callback\n");
-	printf("arg hostname: %s\n", arghostname);
-	printf("captured hostname: %s\n", hostname);
+	// printf("arg hostname: %s\n", arghostname);
+	// printf("captured hostname: %s\n", hostname);
 	if(strcmp(arghostname, hostname) == 0) {
-		
-		puts("both is same");
 		strcpy(hostname, " ");
-		printf("after strcpy: %s\n", hostname);
 		return nfq_set_verdict(qh, id, NF_DROP, 0, NULL);
 	}
 	else {
